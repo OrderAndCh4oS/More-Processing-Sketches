@@ -11,9 +11,9 @@ void setup() {
   fill(line);
   strokeWeight(0);
   for (int i = 0; i < 15; i++) {
-    lines.add(new Line(50, i * 80));
+    lines.add(new Line(25, i * 35));
   }
-  for (int i = 0; i < 350; i++) {
+  for (int i = 0; i < 34; i++) {
     for (Line line : lines) {
       line.update();
     }
@@ -25,10 +25,10 @@ void draw() {
   for (Line line : lines) {
     line.update();
   }
-  for (int i = 0; i < 12; i++) {
+  for (int i = 0; i < 128; i++) {
     pushMatrix();
     translate(320, 180);
-    rotate(map(i, 0, 12, 0, PI*2));
+    rotate(map(i, 0, 128, 0, PI*2));
     for (Line line : lines) {
       line.draw();
     }
@@ -36,24 +36,24 @@ void draw() {
   }
   count++;
   saveFrame("f####.png");
-  if (count == 80) exit();
+  if (count == 71) exit();
 }
 
 class Point {
   int x = 0;
   int y = 0;
-  Point(int x, int y) {
+  Point(int x, int y) { //<>//
     this.x = x;
     this.y = y;
   }
 
   void update() {
-    x += 1;
-    y += 1;
+    x += 5;
+    y += 15;
   }
 
   void draw() {
-    ellipse(x, y, 1, 1);
+    ellipse(x, y, 3, 3);
   }
 }
 
