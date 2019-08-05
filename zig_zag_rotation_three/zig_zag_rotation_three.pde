@@ -1,56 +1,47 @@
 
 color bg = #000000;
-color line = #ffffff;
-ArrayList<Line> lines = new ArrayList<Line>();
+color primary = #ffffff;
 int count = 0;
+Line l = new Line(30, 10);
 
 void setup() {
   size(640, 360);
   frameRate(24);
   background(bg);
-  fill(line);
+  fill(primary);
   strokeWeight(0);
-  for (int i = 0; i < 15; i++) {
-    lines.add(new Line(25, i * 35));
-  }
-  for (int i = 0; i < 34; i++) {
-    for (Line line : lines) {
-      line.update();
-    }
-  }
 }
 
 void draw() {
   background(bg);
-  for (Line line : lines) {
-    line.update();
-  }
+  pushMatrix();
+  translate(320, 180);
+  l.update();
   for (int i = 0; i < 128; i++) {
-    pushMatrix();
-    translate(320, 180);
-    rotate(map(i, 0, 128, 0, PI*2));
-    for (Line line : lines) {
-      line.draw();
-    }
-    popMatrix();
+      rotate(map(i, 0, 128, 0, PI*2));
+      l.draw();
   }
+  popMatrix();
   count++;
-  saveFrame("f####.png");
-  if (count == 71) exit();
+  //saveFrame("f####.png");
+  if (count == 250) exit();
 }
 
 class Point {
-  int x = 0;
-  int y = 0;
+  float x = 0;
+  float y = 0;
+  float a = 0;
   
-  Point(int x, int y) { //<>//
+  Point(float x, float y) { //<>//
     this.x = x;
     this.y = y;
   }
   
   void update() {
-    x += 5;
-    y += 15;
+    float dX = sin(a) * 6;
+    this.x = dX - dX / 2;
+    this.y += 4;
+    this.a++;
   }
 
   void draw() {
@@ -61,12 +52,12 @@ class Point {
 class Line {
   int iterations = 0;
   int maxTail = 10;
+  int angle = 0;
   int tail = 0;
   int delay = 0;
   ArrayList<Point> points = new ArrayList<Point>();
 
-  Line() {
-  }
+  Line() {}
 
   Line(int maxTail) {
     this.maxTail = maxTail;
