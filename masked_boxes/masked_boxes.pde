@@ -4,55 +4,54 @@ void setup() {
   background(#080614);
   strokeCap(SQUARE);
   int boxSize = 40;
-  int minimum = 2;
-  int maximum = boxSize - 4;
+  int minimum = -2;
+  int maximum = boxSize + 2;
   for (int i = 0; i < 2400 / boxSize; i++) {
     for (int j = 0; j < 1600 / boxSize; j++) {
       PGraphics maskImage;
       PGraphics sourceImage;
       pushMatrix();
-      translate((boxSize * i) + 2, (boxSize * j) + 2);
-      sourceImage = createGraphics(16, 16);
+      translate((boxSize * i), (boxSize * j));
+      sourceImage = createGraphics(boxSize-4, boxSize-4);
       sourceImage.beginDraw();
       for (int k = 0; k < 6; k++) {
-        pushMatrix();
-        translate(1, 1);
-        strokeWeight(random(6)+2);
+        sourceImage.strokeWeight(random(6)+2);
         switch((int)random(2)) {
         case 0:
-          stroke(#dd0011);
+          sourceImage.stroke(#dd0011);
           break;
         case 1:
-          stroke(#ededed);
+          sourceImage.stroke(#ededed);
           break;
         }
         switch((int)random(5)) {
         case 0:
-          line(minimum, random(maximum), maximum, random(maximum));
+          sourceImage.line(minimum, random(maximum), maximum, random(maximum));
           break;
         case 1:
-          line(random(maximum), minimum, minimum, random(maximum));
+          sourceImage.line(random(maximum), minimum, minimum, random(maximum));
           break;
         case 2:
-          line(random(maximum), minimum, random(maximum), maximum);
+          sourceImage.line(random(maximum), minimum, random(maximum), maximum);
           break;
         case 3:
-          line(minimum, random(maximum), random(maximum), minimum);
+          sourceImage.line(minimum, random(maximum), random(maximum), minimum);
           break;
         }
-        popMatrix();
       }
+      sourceImage.noFill();
+      sourceImage.strokeWeight(4);
+      sourceImage.stroke(#ededed);
+      sourceImage.rect(3, 3, boxSize-9, boxSize-9);
       sourceImage.endDraw();
-
-      maskImage = createGraphics(16, 16);
+      maskImage = createGraphics(boxSize-4, boxSize-4);
       maskImage.beginDraw();
-      noFill();
-      strokeWeight(2);
-      stroke(#ededed);
-      rect(2, 2, boxSize-4, boxSize-4);
+      maskImage.noStroke();
+      maskImage.fill(#ffffff);
+      maskImage.rect(2, 2, boxSize-2, boxSize-2);
       maskImage.endDraw();
       sourceImage.mask(maskImage);
-      image(sourceImage, 0, 0);
+      image(sourceImage, 2, 2);
       popMatrix();
     }
   }
