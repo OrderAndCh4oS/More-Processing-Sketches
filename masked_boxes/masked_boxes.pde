@@ -1,20 +1,20 @@
 
 void setup() {
-  size(2400, 1600);
+  size(1200, 782);
   background(#080614);
   strokeCap(SQUARE);
-  int boxSize = 40;
+  int boxSize = 60;
   int minimum = -2;
   int maximum = boxSize + 2;
-  for (int i = 0; i < 2400 / boxSize; i++) {
-    for (int j = 0; j < 1600 / boxSize; j++) {
+  for (int i = 0; i < 1200 / boxSize; i++) {
+    for (int j = 0; j < 782 / boxSize; j++) {
       PGraphics maskImage;
       PGraphics sourceImage;
       pushMatrix();
       translate((boxSize * i), (boxSize * j));
       sourceImage = createGraphics(boxSize-4, boxSize-4);
       sourceImage.beginDraw();
-      for (int k = 0; k < 6; k++) {
+      for (int k = 0; k < 12; k++) {
         sourceImage.strokeWeight(random(6)+2);
         switch((int)random(2)) {
         case 0:
