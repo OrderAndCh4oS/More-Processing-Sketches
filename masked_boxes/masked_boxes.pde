@@ -1,13 +1,13 @@
 
 void setup() {
-  size(1200, 782);
+  size(2400, 1600);
   background(#080614);
   strokeCap(SQUARE);
   int boxSize = 60;
   int minimum = -2;
   int maximum = boxSize + 2;
-  for (int i = 0; i < 1200 / boxSize; i++) {
-    for (int j = 0; j < 782 / boxSize; j++) {
+  for (int i = 0; i < 2400 / boxSize; i++) {
+    for (int j = 0; j < 1600 / boxSize; j++) {
       PGraphics maskImage;
       PGraphics sourceImage;
       pushMatrix();

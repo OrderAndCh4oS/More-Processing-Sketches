@@ -2,10 +2,10 @@
 color bg = #fff73d;
 color primary = #1e2a57;
 color secondary = #444444;
-int w = 1500;
-int h = 500;
+int w = 2400;
+int h = 1600;
 int count = 0;
-int lineCount = 200;
+int lineCount = 400;
 int boxSides = 18;
 ArrayList<Line> lines = new ArrayList<Line>();
 ArrayList<Line> box = new ArrayList<Line>();
@@ -138,7 +138,7 @@ class Box {
 void setup() {
   frameRate(24);
   background(bg);
-  size(1500, 500);
+  size(2400, 1600);
   for (int i = 0; i < lineCount; i++) {
     lines.add(new Line(new Point(i * 10 - w, w), new Point(i * 10, 0),
     primary));
