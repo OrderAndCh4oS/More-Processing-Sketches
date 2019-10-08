@@ -1,19 +1,33 @@
 
 void setup() {
-  PImage img = loadImage("gabor-molnar-xesvLZQ1_bc-unsplash.jpg");
-  background(#ECDED7);
-  size(1600, 2400);
-  for (int i = 0; i < 1600/18; i++) {
-    for (int j = 0; j < 2400/18; j++) {
-      PImage newImg = img.get(i*40, j*40, 40, 40);
+  PImage img = loadImage("luke-southern-N5GCFcsVbys-unsplash.jpg");
+  background(#3C4E57);
+  size(4800, 3600);
+  for (int i = 0; i < 4800/24; i++) {
+    for (int j = 0; j < 3600/24; j++) {
+      PImage newImg = img.get(i*32, j*32, 32, 32);
       float shade = extractShadeFromImage(newImg);
-      //DotBox box;
-      //box = new DotBox(new Point(i*24, j*24));
+      DotBox box;
+      box = new DotBox(new Point(i*24, j*24));
       //box.setScale(1 - shade);
       //box.draw();
-      CrossBox box;
-      box = new CrossBox(new Point(i*18, j*18));
-      box.setScale(1 - shade);
+      //CrossBox box;
+      //box = new CrossBox(new Point(i*24, j*24));
+      switch(floor(shade * 6)) {
+      case 0:
+        box.setColour(#C48048);
+        break;
+      case 1:
+        box.setColour(#A88048);
+        break;
+      case 2:
+        box.setColour(#F89A48);
+        break;
+      default: 
+        box.setColour(#F8B048);
+        break;
+      }
+      box.setScale(shade);
       box.draw();
     }
   }
@@ -61,6 +75,10 @@ abstract class ScalingShape extends Point {
     _scale = scale;
   }
 
+  void setColour(color colour) {
+    _colour = colour;
+  }
+
   abstract void draw();
 }
 
@@ -85,7 +103,7 @@ class Dot extends ScalingShape {
 }
 
 class Cross extends ScalingShape {
-  private float _stroke = 4;
+  private float _stroke = 3;
   Cross(float x, float y, float size) {
     this(x, y, size, #28343E);
   }
@@ -106,53 +124,63 @@ class Cross extends ScalingShape {
   }
 }
 
-class DotBox {
-  Point _topLeft;
-  float _scale;
+class Box {
+  protected Point _topLeft;
+  protected int _points = 3;
+  protected int _size = 8;
+  protected float _scale;
+  protected color _colour;
+
+  Box(Point topLeft) {
+    _topLeft = topLeft;
+  }
+
+  void setScale(float scale) {
+    _scale = scale;
+  }
+
+  void setColour(color colour) {
+    _colour = colour;
+  }
+}
+
+class DotBox extends Box {
   ArrayList<Dot> _dots = new ArrayList<Dot>();
 
   DotBox(Point topLeft) {
-    _topLeft = topLeft;
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
+    super(topLeft);
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 5; j++) {
         _dots.add(new Dot(topLeft.x() + (i * 8), topLeft.y() + (j * 8), 8));
       }
     }
   }
 
-  void setScale(float scale) {
-    _scale = scale;
-  }
-
   void draw() {
     for (Dot dot : _dots) {
       dot.setScale(_scale);
+      dot.setColour(_colour);
       dot.draw();
     }
   }
 }
 
-class CrossBox {
-  Point _topLeft;
-  float _scale;
+class CrossBox extends Box {
   ArrayList<Cross> _dots = new ArrayList<Cross>();
 
   CrossBox(Point topLeft) {
-    _topLeft = topLeft;
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        _dots.add(new Cross(topLeft.x() + (i * 6), topLeft.y() + (j * 6), 6));
+    super(topLeft);
+    for (int i = 0; i < _points; i++) {
+      for (int j = 0; j < _points; j++) {
+        _dots.add(new Cross(topLeft.x() + (i * _size), topLeft.y() + (j * _size), _size));
       }
     }
-  }
-
-  void setScale(float scale) {
-    _scale = scale;
   }
 
   void draw() {
     for (Cross dot : _dots) {
       dot.setScale(_scale);
+      dot.setColour(_colour);
       dot.draw();
     }
   }
