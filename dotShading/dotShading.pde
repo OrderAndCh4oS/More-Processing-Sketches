@@ -38,8 +38,6 @@ class Point {
   }
 
   void setY(float y) {
-
-
     _y = y;
   }
 }

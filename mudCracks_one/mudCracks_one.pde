@@ -72,6 +72,7 @@ class Point implements Cloneable {
 
 class Node {
   private Point _point;
+  private ArrayList<Edge> _edges = new ArrayList<Edge>();
   private String _uuid;
 
   private Node() {
@@ -112,6 +113,10 @@ class Node {
 
   public Point getPoint() {
     return _point;
+  }
+  
+  public void addEdge(Edge edge) {
+     _edges.add(edge);
   }
 
   public void draw() {
@@ -287,6 +292,12 @@ class Graph {
     }
     _longestEdge = longestEdge;
     return longestEdge;
+  }
+  
+  public void findLargestLoop() {
+    for (Node n: _nodes) {
+      
+    }
   }
 
   // Todo: workout what's happening here
