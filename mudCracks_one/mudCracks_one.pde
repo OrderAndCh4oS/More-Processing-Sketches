@@ -9,7 +9,7 @@ MudCrackGenerator mudCrackGenerator = new MudCrackGenerator();
 
 void setup() {
   size(500, 500);
-  frameRate(30);
+  frameRate(1);
   background(#ffffff);
 }
 
@@ -114,9 +114,30 @@ class Node {
   public Point getPoint() {
     return _point;
   }
-  
+
   public void addEdge(Edge edge) {
-     _edges.add(edge);
+    _edges.add(edge);
+  }
+
+  public TreeMap<Float, Edge> getEdgesSortedByAngle() {
+    TreeMap<Float, Edge> map = new TreeMap<Float, Edge>();
+    for (Edge e : _edges) {
+      float angle = getEdgeAngle(e);
+      map.put(angle, e);
+    }
+    
+    return map;
+  }
+
+  private float getEdgeAngle(Edge edge) {
+    float angle;
+    Vector v = new Vector(_point);
+    if (edge.getSource().getUuid() == _uuid) {
+      angle = v.angleTo(new Vector(edge.getDestination().getPoint()));
+    } else {
+      angle = v.angleTo(new Vector(edge.getSource().getPoint()));
+    }
+    return angle;
   }
 
   public void draw() {
@@ -216,10 +237,7 @@ class Graph {
     try {
       Node sourceNode = findNode(srcUuid);
       Node destinationNode = findNode(destinationUuid);
-      if (!hasConnection(sourceNode, destinationNode)) {
-        Edge edge = new Edge(sourceNode, destinationNode);
-        _edges.add(edge);
-      }
+      this.addConnection(sourceNode, destinationNode);
     } 
     catch (NotFoundException e) {
       println(e.getMessage());
@@ -230,6 +248,8 @@ class Graph {
   public void addConnection(Node sourceNode, Node destinationNode) {
     if (!hasConnection(sourceNode, destinationNode)) {
       Edge edge = new Edge(sourceNode, destinationNode);
+      sourceNode.addEdge(edge);
+      destinationNode.addEdge(edge);
       _edges.add(edge);
     }
   }
@@ -275,14 +295,9 @@ class Graph {
   }
 
   public Edge getLongestEdge() {
-    // Longest edge can be set when adding a new node
-    // If it's the first edge it's the longest, otherwise if longer than the current longest
-    // It will need to be updated when splitting an edge via findLongestEdge
     return _longestEdge;
   }
 
-  // Todo: workout what's happening here
-  //       Splitting longest node should join the graphs. 
   public Edge findLongestEdge() {
     Edge longestEdge = _edges.get(0);
     for (Edge e : _edges) {
@@ -293,10 +308,14 @@ class Graph {
     _longestEdge = longestEdge;
     return longestEdge;
   }
-  
+
   public void findLargestLoop() {
-    for (Node n: _nodes) {
-      
+    for (Node n : _nodes) {
+      println("here");
+      for (Map.Entry<Float, Edge> entry : n.getEdgesSortedByAngle().entrySet()) {
+        // Todo: Do something with sorted edges.
+        println(entry.getKey());
+      }
     }
   }
 
@@ -475,6 +494,8 @@ class MudCrackGenerator {
       ListIterator graphIter = _graphList.listIterator();
       while (graphIter.hasNext()) {
         Graph g = (Graph)graphIter.next();
+        // Todo: move findLargestLoop() where it will be needed. Probably startPathTracer.
+        g.findLargestLoop();
         Edge intersectEdge = g.findIntersect(pt.getLine());
         if (
           !intersectEdge.isNull()
@@ -625,8 +646,8 @@ class Vector {
     _point.setY(_point.y() / value);
   }
 
-  void angleTo(Vector v2) {
-    atan2(
+  float angleTo(Vector v2) {
+    return atan2(
       v2.y() - _point.y(), 
       v2.x() - _point.x() 
       );
