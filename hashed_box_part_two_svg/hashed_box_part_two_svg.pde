@@ -2,15 +2,18 @@ import processing.svg.*;
 
 color bg = #ffffff;
 color primary = #000000;
-color secondary = #444444;
-int lineCount = 104;
-int boxSides = 20;
+color secondary = #000000;
+int w = 2400;
+int h = 1600;
+int count = 0;
+int lineCount = 400;
+int boxSides = 18;
 ArrayList<Line> lines = new ArrayList<Line>();
 ArrayList<Line> box = new ArrayList<Line>();
 
 class Point {
   float x, y;
-  color fillColour = #000000;
+  color fillColour = #FF0000;
 
   Point(float x, float y) {
     this.x = x;
@@ -136,24 +139,28 @@ class Box {
 void setup() {
   frameRate(24);
   background(bg);
-  size(640, 360, SVG, "filename12.svg");
+  size(2400, 1600, SVG, "16.svg");
   for (int i = 0; i < lineCount; i++) {
-    lines.add(new Line(new Point(i * 10 - 360, 360), new Point(i * 10, 0)));
+    lines.add(new Line(new Point(i * 10 - w, w), new Point(i * 10, 0),
+    primary));
   }
 
   box.add(new Line(
-    new Point(random(10, 630), random(10, 350)), 
-    new Point(random(10, 630), random(10, 350))
+    new Point(random(10, w-10), random(10, h-10)), 
+    new Point(random(10, w-10), random(10, h-10)),
+    primary
     ));
   for (int i = 1; i < boxSides -1; i++) {
     box.add(new Line(
       new Point(box.get(i-1).getQ().x(), box.get(i-1).getQ().y()), 
-      new Point(random(10, 630), random(10, 350))
+      new Point(random(10, w-10), random(10, h-10)),
+    primary
       ));
   }
   box.add(new Line(
     new Point(box.get(boxSides-2).getQ().x(), box.get(boxSides-2).getQ().y()), 
-    new Point(box.get(0).getP().x(), box.get(0).getP().y())
+    new Point(box.get(0).getP().x(), box.get(0).getP().y()),
+    primary
     ));
 }
 
@@ -178,6 +185,7 @@ void draw() {
   }
 
   //saveFrame("f####.png");
-  println("~~ fin ~~");
-  exit();
+  count++;
+  if (count > 1)
+    exit();
 }
