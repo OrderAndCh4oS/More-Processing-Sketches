@@ -44,9 +44,9 @@ void draw() {
   while (drawnCount < 150) {
     Line nextLineBase = getRandomLine();
     Point nextPoint = nextLineBase.getRandomPoint();
-    float angleOffset = PI*0.8;
+    float angleOffset = PI*0.5;
     float angle = nextLineBase.getAngle() - random(angleOffset/2) - angleOffset;
-    Line nextLine = new Line(nextPoint, 15 + random(40), angle);
+    Line nextLine = new Line(nextPoint, 400 + random(400), angle);
     boolean doesIntersect = false;
     for (Line l : lines) {
       if (nextLine.isIntersect(l)) {
@@ -265,7 +265,7 @@ class Line {
     fill(colours.rand());
     Vector base = new Vector(_p);
     Vector move = new Vector(0, 0);
-    move.setLength(1);
+    move.setLength(2);
     move.setAngle(getAngle() + PI * 0.5);
     base.addTo(move);
     triangle(base.getPoint().x(), base.getPoint().y(), p().x(), p().y(), drawTo().x(), drawTo().y());

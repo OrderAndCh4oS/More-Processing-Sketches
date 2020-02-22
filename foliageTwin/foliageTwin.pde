@@ -1,70 +1,91 @@
 import java.util.*;
-ArrayList<Line> lines = new ArrayList<Line>();
-int frames = 0;
-
-int bg = #000D08;
-class Colours {
-  ArrayList<Integer> _colours = new ArrayList<Integer>();
-  int _bg;
-  Colours(int bg, int one, int two, int three, int four) {
-    _bg = bg;
-    _colours.add(one);
-    _colours.add(two);
-    _colours.add(three);
-    _colours.add(four);
-  }
-  ArrayList<Integer> get() {
-    return _colours;
-  }
-  int rand() {
-    return _colours.get(new Random().nextInt(_colours.size()));
-  }
-  int bg() {
-    return _bg;
-  }
-}
 
 Colours colourSetOne = new Colours(#000D08, #E2F26B, #8C8372, #F27C38, #F21D1D);
 Colours colourSetTwo = new Colours(#04090D, #F25C78, #BABDBF, #F2D8CE, #A62D2D);
 Colours colourSetThree = new Colours(#0D0C0B, #262523, #F2D6B3, #A67449, #594B3F);
+Colours colourSetFour = new Colours(#0F0C05, #4FF588, #A0AAA1, #CEF5BA, #2CA833);
+Colours colourSetFive = new Colours(#FFB952, #FF7829, #FF441F, #FF0F01, #FF4F6F);
+Colours colourSetSix = new Colours(#1F0200, #8017FF, #4911FF, #171AFF, #1D68FF, #6DC0FF);
+Colours colourSetSeven = new Colours(#010F03, #C0FC0A, #02EBA5, #14DE25, #65FF24, #20FF7B);
 
 Colours colours;
+
+Foliage foliageOne = new Foliage(2400/3, 500, PI*2, colourSetFive);
+Foliage foliageTwo = new Foliage((2400/3)*2, 700, PI, colourSetSeven);
+
 void setup() {
-  colours = colourSetTwo;
-  size(1500, 1500);
+  colours = colourSetThree;
+  size(2400, 1200);
   background(colours.bg());
   noStroke();
-  Line initialLine = new Line(new Point(750, 750), 40, PI*0.5);
-  lines.add(initialLine);
-  initialLine.draw();
+  foliageOne.setup();
+  foliageTwo.setup();
 }
 void draw() {
-  frames++;
-  int drawnCount = 0;
-  while (drawnCount < 150) {
-    Line nextLineBase = getRandomLine();
-    Point nextPoint = nextLineBase.getRandomPoint();
-    float angleOffset = PI*0.8;
-    float angle = nextLineBase.getAngle() - random(angleOffset/2) - angleOffset;
-    Line nextLine = new Line(nextPoint, 15 + random(40), angle);
-    boolean doesIntersect = false;
-    for (Line l : lines) {
-      if (nextLine.isIntersect(l)) {
-        doesIntersect = true;
-        break;
-      }
+  int drawnOneCount = 0;
+  int drawnTwoCount = 0;
+  while (drawnOneCount < 75 && drawnTwoCount < 75) {
+    if(drawnOneCount < 75 && foliageOne.draw(foliageTwo.getLines())) {
+       drawnOneCount++;
     }
-    if (!doesIntersect) {
-      nextLine.draw();
-      lines.add(nextLine);
-      drawnCount++;
+    if(drawnTwoCount < 75 && foliageTwo.draw(foliageOne.getLines())) {
+       drawnTwoCount++;
     }
   } 
   saveFrame("f###.png");
 }
-Line getRandomLine() {
-  return lines.get(new Random().nextInt(lines.size()));
+class Foliage {
+  ArrayList<Line> _lines = new ArrayList<Line>();
+  Point _p;
+  float _startingAngle = PI*0.5;
+  Colours _colours;
+  
+  Foliage(int x, int y, float angle, Colours colours) {
+    _p = new Point(x, y);
+    _colours = colours;
+    _startingAngle = angle;
+  }
+
+  void setup() {
+    Line initialLine = new Line(_p, 60, _startingAngle);
+    _lines.add(initialLine);
+    initialLine.draw(_colours);
+  }
+
+  boolean draw(ArrayList<Line> otherLines) {
+    Line nextLine = getNextLine();
+    for (Line l : _lines) {
+      if (nextLine.isIntersect(l)) {
+        return false;
+      }
+    }
+    for (Line l : otherLines) {
+      if (nextLine.isIntersect(l)) {
+        return false;
+      }
+    }
+    nextLine.draw(_colours);
+    _lines.add(nextLine);
+    return true;
+  }
+  
+  ArrayList<Line> getLines() {
+    return _lines;
+  }
+
+  Line getRandomLine() {
+    return _lines.get(new Random().nextInt(_lines.size()));
+  }
+
+  Line getNextLine() {
+    Line nextLineBase = getRandomLine();
+    Point nextPoint = nextLineBase.getRandomPoint();
+    float angleOffset = PI*0.7;
+    float angle = nextLineBase.getAngle() - random(angleOffset/2) - angleOffset;
+    return new Line(nextPoint, 50 + random(30), angle);
+  }
 }
+
 class Point implements Cloneable {
   private float _x;
   private float _y;
@@ -261,13 +282,33 @@ class Line {
     float theta = atan2(dY, dX);
     return theta;
   }
-  void draw() {
+  void draw(Colours colours) {
     fill(colours.rand());
     Vector base = new Vector(_p);
     Vector move = new Vector(0, 0);
-    move.setLength(1);
+    move.setLength(2);
     move.setAngle(getAngle() + PI * 0.5);
     base.addTo(move);
     triangle(base.getPoint().x(), base.getPoint().y(), p().x(), p().y(), drawTo().x(), drawTo().y());
+  }
+}
+
+class Colours {
+  ArrayList<Integer> _colours = new ArrayList<Integer>();
+  int _bg;
+  Colours(int bg, int ...colours) {
+    _bg = bg;
+    for (int colour : colours) {
+       _colours.add(colour);
+    }
+  }
+  ArrayList<Integer> get() {
+    return _colours;
+  }
+  int rand() {
+    return _colours.get(new Random().nextInt(_colours.size()));
+  }
+  int bg() {
+    return _bg;
   }
 }
