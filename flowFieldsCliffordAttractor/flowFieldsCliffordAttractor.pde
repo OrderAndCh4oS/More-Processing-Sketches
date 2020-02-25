@@ -90,8 +90,8 @@ class Point implements Cloneable {
     _x += _vx;
     _y += _vy;
     triangle(lastX, lastY, lastX+4, lastY, _x, _y);
-    _vx *= 0.98;
-    _vy *= 0.98;
+    _vx *= 0.97;
+    _vy *= 0.97;
   }
   float getValue() {
     // clifford attractor
