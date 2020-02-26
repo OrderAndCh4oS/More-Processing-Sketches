@@ -5,7 +5,7 @@ ArrayList<Line> collisionLines = new ArrayList<Line>();
 int frames = 0;
 int totalCount = 0;
 
-float scale = 0.92;
+float scale = 0.99;
 
 Colours colourSetBw = new Colours(#0B0B0B, #ADADAD, #6E6E6E, #858585, #949494);
 Colours colourSetOne = new Colours(#000D08, #E2F26B, #8C8372, #F27C38, #F21D1D);
@@ -18,24 +18,25 @@ Colours colourSetSeven = new Colours(#010F03, #C0FC0A, #02EBA5, #14DE25, #65FF24
 Colours colourSetEight = new Colours(#2B1829, #FF5740, #E83A49, #FF4DB5, #E03AE8, #AD39E3);
 
 void setup() {
-  size(1500, 1500);
+  size(2880, 1800);
   background(#0C080F);
   noStroke();
-  initStems(colourSetEight, colourSetBw, 5);
-  initStems(colourSetSix, colourSetBw, 5);
+  initStems(colourSetSix, colourSetBw, 10);
+  initStems(colourSetEight, colourSetBw, 10);
   saveFrame("f###.png");
 }
+
 void draw() {
   frames++;
   int drawnCount = 0;
-  while (drawnCount < 40) {
+  while (drawnCount < 150) {
     Line nextLineBase = getRandomLine();
     float nextLength = nextLineBase.getLength() * scale;
     Point nextPoint = nextLineBase.getRandomPoint();
     float angleRange = 0.4;
-    float angleRand = PI*angleRange - random(PI*angleRange*1.15);
+    float angleRand = PI*angleRange - random(PI*angleRange*2);
     float angle = nextLineBase.getAngle() + angleRand;
-    Line nextLine = new Line(nextPoint, nextLength, angle, nextLineBase.getFoliageColours(), nextLineBase.getStemColours());
+    Line nextLine = new Line(nextPoint, nextLength * (0.6 + random(0.4)), angle, nextLineBase.getFoliageColours(), nextLineBase.getStemColours());
     boolean doesIntersect = false;
     for (Line l : collisionLines) {
       if (nextLine.isIntersect(l)) {
@@ -51,14 +52,14 @@ void draw() {
       totalCount++;
     }
   }
-  scale -= 0.002;
+  //scale -= 0.002;
   saveFrame("f###.png");
-  if (frames == 100) exit();
+  if (frames == 80) exit();
 }
 
 void initStems(Colours foliageColours, Colours stemColours, int stemCount) {
   for (int i = 0; i < stemCount; i++) {
-    Line l = new Line(new Point(500 + random(500), 500 + random(500)), 100, random(PI*2), foliageColours, stemColours);
+    Line l = new Line(new Point(640 + random(1600), 300 + random(1200)), 140, random(PI*2), foliageColours, stemColours);
     drawLines.add(l);
     collisionLines.add(l);
     l.draw();
@@ -102,6 +103,7 @@ class Point implements Cloneable {
     return (Point) super.clone();
   }
 }
+
 class Vector {
   private Point _point;
   public Vector(float x, float y) {
@@ -192,6 +194,7 @@ class Vector {
     return sqrt((dX * dX) + (dY * dY));
   }
 }
+
 class Line {
   private Point _p, _q;
   private float _length;
@@ -285,15 +288,22 @@ class Line {
   void draw() {
     Vector base = new Vector(_p);
     Vector move = new Vector(0, 0);
-    move.setLength(3);
+    move.setLength(2);
     move.setAngle(getAngle() + PI * 0.5);
     base.addTo(move);
-    if (_length < 85) {
+    
+    Vector baseTwo = new Vector(_p);
+    Vector moveTwo = new Vector(0, 0);
+    moveTwo.setLength(2);
+    moveTwo.setAngle(getAngle() + PI * 1.5);
+    baseTwo.addTo(moveTwo);
+  
+    if (_length < 100) {
       fill(_foliageColours.rand());
     } else {
       fill(_stemColours.rand());
     }
-    triangle(base.getPoint().x(), base.getPoint().y(), p().x(), p().y(), drawTo().x(), drawTo().y());
+    triangle(base.getPoint().x(), base.getPoint().y(), baseTwo.getPoint().x(), baseTwo.getPoint().y(), drawTo().x(), drawTo().y());
   }
 }
 
