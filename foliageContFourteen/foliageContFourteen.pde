@@ -5,37 +5,30 @@ ArrayList<Line> collisionLines = new ArrayList<Line>();
 int frames = 0;
 int totalCount = 0;
 
-float scale = 0.97;
+float scale = 1;
 
 Colours colourSetBw = new Colours(#0B0B0B, #ADADAD, #6E6E6E, #858585, #949494);
-Colours colourSetOne = new Colours(#000D08, #E2F26B, #8C8372, #F27C38, #F21D1D);
-Colours colourSetTwo = new Colours(#04090D, #F25C78, #BABDBF, #F2D8CE, #A62D2D);
-Colours colourSetThree = new Colours(#0D0C0B, #262523, #F2D6B3, #A67449, #594B3F);
-Colours colourSetFour = new Colours(#0F0C05, #4FF588, #A0AAA1, #CEF5BA, #2CA833);
-Colours colourSetFive = new Colours(#0D0C0B, #FFB952, #FF7829, #FF441F, #FF0F01, #FF4F6F);
-Colours colourSetSix = new Colours(#0C080F, #8017FF, #4911FF, #171AFF, #1D68FF, #6DC0FF);
-Colours colourSetSeven = new Colours(#010F03, #C0FC0A, #02EBA5, #14DE25, #65FF24, #20FF7B);
-Colours colourSetEight = new Colours(#2B1829, #FF5740, #E83A49, #FF4DB5, #E03AE8, #AD39E3);
+Colours colourSetOne = new Colours(#181F2E, #FF9C7A, #FAE769, #58FF86, #FF2BE4, #6DFF2B);
+
 
 void setup() {
   size(1500, 1500);
-  background(#0C080F);
+  background(colourSetOne.bg());
   noStroke();
-  initStems(colourSetEight, colourSetEight, 5);
-  initStems(colourSetFive, colourSetFive, 5);
+  initStems(colourSetOne, colourSetOne, 20);
   saveFrame("f###.png");
 }
 void draw() {
   frames++;
   int drawnCount = 0;
-  while (drawnCount < 40) {
+  while (drawnCount < 500) {
     Line nextLineBase = getRandomLine();
     float nextLength = nextLineBase.getLength() * scale;
     Point nextPoint = nextLineBase.q();
-    float angleRange = 0.3;
-    float angleRand = PI*angleRange - random(PI*angleRange*2);
+    float angleRange = 0.5;
+    float angleRand = PI*angleRange - random(PI*angleRange*0.9);
     float angle = nextLineBase.getAngle() + angleRand;
-    Line nextLine = new Line(nextPoint, nextLength, angle, nextLineBase.getAngleRange() + 0.25, nextLineBase.getFoliageColours(), nextLineBase.getStemColours());
+    Line nextLine = new Line(nextPoint, nextLength, angle, nextLineBase.getFoliageColours(), nextLineBase.getStemColours());
     boolean doesIntersect = false;
     for (Line l : collisionLines) {
       if (nextLine.isIntersect(l)) {
@@ -43,7 +36,7 @@ void draw() {
         break;
       }
     }
-    if (!doesIntersect && nextLength > 25) {
+    if (!doesIntersect && nextLength > 45) {
       nextLine.draw();
       drawLines.add(nextLine);
       collisionLines.add(nextLine);
@@ -51,18 +44,22 @@ void draw() {
       totalCount++;
     }
   }
-  scale -= 0.002;
+  //scale -= 0.002;
   saveFrame("f###.png");
-  if (frames == 120) exit();
+  if (frames == 60) exit();
 }
 
 void initStems(Colours foliageColours, Colours stemColours, int stemCount) {
   for (int i = 0; i < stemCount; i++) {
-    Line l = new Line(new Point(0 + random(1500), 0 + random(1500)), 100, random(PI*2), 0.1, foliageColours, stemColours);
+    Line l = new Line(new Point(0 + random(1500), 0 + random(1500)), 50, random(PI*2), foliageColours, stemColours);
     drawLines.add(l);
     collisionLines.add(l);
     l.draw();
   }
+}
+
+boolean isInBounds(Point p) {
+  return !(p.x() < 0 || p.y() < 0 || p.x() > 1500 || p.y() > 1500);
 }
 
 Line getRandomLine() {
@@ -197,7 +194,6 @@ class Line {
   private float _length;
   private Colours _foliageColours;
   private Colours _stemColours;
-  private float _angleRange;
   public Line(Point p, Point q) {
     this._p = p;
     this._q = q;
@@ -211,9 +207,8 @@ class Line {
     temp.addTo(new Vector(_p));
     _q = temp.getPoint();
   }
-  public Line(Point p, float len, float angle, float angleRange, Colours foliageColours, Colours stemColours) {
+  public Line(Point p, float len, float angle, Colours foliageColours, Colours stemColours) {
     this(p, len, angle);
-    _angleRange = angleRange;
     _foliageColours = foliageColours;
     _stemColours = stemColours;
   }
@@ -259,8 +254,8 @@ class Line {
     return new Point(dX, dY);
   }
   private Point drawTo() {
-    float dX = _p.x() + 0.95 * (_q.x() - _p.x());
-    float dY = _p.y() + 0.95 * (_q.y() - _p.y());
+    float dX = _p.x() + 0.80 * (_q.x() - _p.x());
+    float dY = _p.y() + 0.80 * (_q.y() - _p.y());
     return new Point(dX, dY);
   }
   public Point p() {
@@ -284,22 +279,20 @@ class Line {
   Colours getStemColours() {
     return _stemColours;
   }
-  float getAngleRange() {
-    return _angleRange;
-  }
+
   void draw() {
     Vector base = new Vector(_p);
     Vector move = new Vector(0, 0);
-    move.setLength(3);
+    move.setLength(1.5);
     move.setAngle(getAngle() + PI * 0.5);
     base.addTo(move);
-    
+
     Vector baseTwo = new Vector(_p);
     Vector moveTwo = new Vector(0, 0);
-    moveTwo.setLength(3);
+    moveTwo.setLength(1.5);
     moveTwo.setAngle(getAngle() + PI * 1.5);
     baseTwo.addTo(moveTwo);
-    
+
     if (_length < 85) {
       fill(_foliageColours.rand());
     } else {
